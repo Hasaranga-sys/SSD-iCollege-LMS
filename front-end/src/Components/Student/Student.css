@@ -1,0 +1,111 @@
+.hero-image{
+    background-image: url("../images/heroF.png");
+    height: 60;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  position: relative;
+  
+}
+.hero-text{
+  text-align: center;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-420%,80%);
+  color:#FFFFFF;
+  
+}
+
+.note-container{
+    background-color:FFFFFF;
+    width:85%;   
+    left: 30mm;
+    border-Radius: 20mm;
+    
+}
+
+
+
+  /* cards */
+body{
+  /* background:rgb(255, 251, 251);  */
+  /* background: #e0e0e0;  */
+  background: #d9edff;
+  
+  /* background-image: linear-gradient(90deg, rgba(34, 139, 230, 0.33) 5%, rgba(59, 201, 219, 0.4) 95%); */
+  }
+  
+  .card-box {
+      position: relative;
+      color: #fff;
+      padding: 20px 10px 40px;
+      margin: 20px 0px;
+      
+  }
+  .card-box:hover {
+      text-decoration: none;
+      color: #f1f1f1;
+  }
+  .card-box:hover .icon i {
+      font-size: 100px;
+      transition: 1s;
+      -webkit-transition: 1s;
+  }
+  .card-box .inner {
+      padding: 5px 10px 0 10px;
+  }
+  .card-box h3 {
+      font-size: 27px;
+      font-weight: bold;
+      margin: 0 0 8px 0;
+      white-space: nowrap;
+      padding: 0;
+      text-align: left;
+  }
+  .card-box p {
+      font-size: 15px;
+  }
+  .card-box .icon {
+      position: absolute;
+      top: auto;
+      bottom: 5px;
+      right: 5px;
+      z-index: 0;
+      font-size: 72px;
+      color: rgba(0, 0, 0, 0.15);
+  }
+  .card-box .card-box-footer {
+      position: absolute;
+      left: 0px;
+      bottom: 0px;
+      text-align: center;
+      padding: 3px 0;
+      color: rgba(255, 255, 255, 0.8);
+      background: rgba(0, 0, 0, 0.1);
+      width: 100%;
+      text-decoration: none;
+      
+  }
+  .card-box:hover .card-box-footer {
+      background: rgba(0, 0, 0, 0.3);
+      
+  }
+  .bg-blue {
+      background-color: #00c0ef !important;
+  }
+  .bg-green {
+      background-color: #00a65a !important;
+  }
+  .bg-orange {
+      background-color: #f39c12 !important;
+  }
+  .bg-red {
+      background-color: #d9534f !important;
+  }
+  .bg-rosegrad{
+   background-image: radial-gradient(circle, #12b886 20%, #4dabf7 88%);
+  }
+  .bg-yellowgrad{
+    background-image: linear-gradient(90deg, #fab005 5%, #ff8787 95%);
+  }

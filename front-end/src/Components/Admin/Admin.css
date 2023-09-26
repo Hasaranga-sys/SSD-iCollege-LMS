@@ -1,0 +1,82 @@
+ .admin-cad {  
+    margin-left:auto;
+    width:4cm;
+ }
+ .admin-wcad{
+   border-radius: 43px;
+background: linear-gradient(145deg, #faf9f9, #f0f0f0);
+box-shadow:  23px 23px 25px #7b7b7b;
+ }
+
+ .admin-srchbr1{
+    width: 5cm;
+    margin-left: 1ch;
+ }
+ .admin-srchbr-date{
+    width: 5cm;
+    margin-left: 1ch;
+ }
+
+
+ .boxnotice{
+   position: absolute;
+   top: 60%;
+   left: 50%;
+
+   transform: translate(-50%, -50%);
+   width: 1400px;
+   background: #ffffff;
+   border-radius: 20px;
+   box-shadow: 10px 13px 50px 20px #4dabf7;
+ }
+ .boxnotice h2{
+   font-weight: bolder;
+   color: #1a1a1a;
+   text-align: center;
+   padding-top: 5%;
+ }
+ .inputnotice{
+   text-align: center;
+ }
+ .inputnotice input{
+   font-family: "Raleway",sans-serif;
+   text-decoration: none;
+   width: 400px;
+   margin: 15px auto;
+   border: none;
+   outline: none;
+   padding: 20px 25px;
+   border-radius: 50px;
+   font-size: 14px;
+   box-sizing: border-box;
+   box-shadow: -5px 5px 50px 0 #d1e1fc;
+ }
+ .checkbox{
+   margin: 20px auto;
+   padding: 0 55px;
+ }
+ .checkbox a{
+   text-decoration: none;
+   padding-left: 119px;
+ }
+ .boxlog p,a{
+   text-align: center;
+   padding-bottom: 30px;
+   text-decoration: none;
+ }
+ .sub{
+   margin: 40px auto;
+   display: block;
+   padding: 5px 5px;
+   width: 180px;
+   height: 40px;
+   cursor: pointer;
+   outline: none;
+   border: none;
+   border-radius: 40px;
+   text-align: center;
+   font-size: 14px;
+   color: white;
+   background-image: linear-gradient(to bottom right, #9734ff, #3c00f5);
+   box-shadow: 0 20px 50px -10px blue;
+ }

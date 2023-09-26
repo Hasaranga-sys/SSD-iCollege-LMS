@@ -1,0 +1,58 @@
+body{
+    /* padding: 0;
+    margin: 0;
+    height: 100vh;
+    width: 100%; */
+    background-image: linear-gradient(90deg, #228be6 5%, #3bc9db 95%);
+    /* background-image: linear-gradient(to bottom right, #9734ff, #3c00f5); */
+    font-family: "Raleway",sans-serif;
+  }
+  .boxlog{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 500px;
+    background: #ffffff;
+    border-radius: 20px;
+    box-shadow: 10px 13px 50px 6px #4dabf7;
+  }
+  .boxlog h1{
+    font-weight: bolder;
+    color: #1a1a1a;
+    text-align: center;
+    padding-top: 5%;
+  }
+  .inputlog{
+    text-align: center;
+  }
+  .inputlog input{
+    font-family: "Raleway",sans-serif;
+    text-decoration: none;
+    width: 400px;
+    margin: 15px auto;
+    border: none;
+    outline: none;
+    padding: 20px 25px;
+    border-radius: 50px;
+    font-size: 14px;
+    box-sizing: border-box;
+    box-shadow: -5px 5px 50px 0 #d1e1fc;
+  }
+  .checkbox{
+    margin: 20px auto;
+    padding: 0 55px;
+  }
+  .checkbox a{
+    text-decoration: none;
+    padding-left: 119px;
+  }
+  .boxlog p,a{
+    text-align: center;
+    padding-bottom: 30px;
+    text-decoration: none;
+  }
+  .adminNotice-table{
+
+    box-shadow: 0 10px 30px -10px blue;
+  }
