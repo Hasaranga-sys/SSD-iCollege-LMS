@@ -23,9 +23,10 @@
 // export default new userSevices;
 
 import axios from "axios";
+import { BASE_URL } from "../../config.js"
 
 // Define a constant variable for the base URL
-const BASE_URL = "https://localhost:443";
+// const BASE_URL = "https://localhost:443";
 
 class UserServices {
   getAllUsers() {
