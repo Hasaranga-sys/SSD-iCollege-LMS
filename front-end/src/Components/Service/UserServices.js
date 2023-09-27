@@ -25,7 +25,7 @@
 import axios from "axios";
 
 // Define a constant variable for the base URL
-const BASE_URL = "http://localhost:5000";
+const BASE_URL = "https://localhost:443";
 
 class UserServices {
   getAllUsers() {

@@ -1,143 +1,326 @@
 const UserModel = require("../Model/UserModel");
 
-const getAllusers = async (req,res, next) =>{
-    let users;
-    try{
-        users = await UserModel.find();
-    }catch(error){
-        console.log(error);
-    }if(!users){
-        return res.status(404).json({message: "not found"})
-    }
-    return res.status(200).json(users)
-}
+const bcrypt = require('bcrypt');
 
-const addUser = async(req,res,next)=>{
-    let {lastName,initials,email,mobileNumber, faculty,
-        regNumber, password, role} = req.body;
-    let user;
-
-    try{
-        user = await UserModel.findOne({regNumber: regNumber})
-    }catch(error){
-        console.log(error)
-    }
-    if(!user){
-        let finalrole
-        let result = regNumber.toLowerCase();
-        result = result.substring(3, 0);
-        // console.log(result)
-        if (result == "adm"){
-            role= "admin"
-        }else if(result == "lec"){
-            role = "lecture"
-        }else{
-            role ="student"
-        }
-        // console.log(result)
-        try{
-            user = new UserModel({
-                lastName,initials,email,mobileNumber, faculty,
-                regNumber, password, role
-            });
-            await user.save();
-        } catch(error){
-            console.log(error);
-        } if(!user){
-            return res.status(500).json({message: "unable to add"})
-        }
-        return res.status(201).json(user)
-
-
-
-    }else{
-        return res.status(400).json({message: "user already regirted"})
+const getAllusers = async (req, res, next) => {
+  try {
+    const users = await UserModel.find();
+    
+    if (!users || users.length === 0) {
+      return res.status(404).json({ message: "No users found" });
     }
 
+    return res.status(200).json(users);
+  } catch (error) {
+    console.error("Error fetching users:", error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
 
-    try{
-        user = new UserModel({
-            lastName,initials,email,mobileNumber, faculty,
-            regNumber, password, role
-        });
-        await user.save();
-    } catch(error){
-        console.log(error);
-    } if(!user){
-        return res.status(500).json({message: "unable to add"})
+
+const addUser = async (req, res, next) => {
+    const {
+      lastName,
+      initials,
+      email,
+      mobileNumber,
+      faculty,
+      regNumber,
+      password,
+      role,
+    } = req.body;
+  
+    try {
+      // Check if a user with the same regNumber already exists
+      const existingUser = await UserModel.findOne({ regNumber: regNumber });
+  
+      if (existingUser) {
+        return res.status(400).json({ message: "User already registered" });
+      }
+  
+      // Hash the password before saving it
+      const saltRounds = 10; // You can adjust the number of salt rounds as needed
+      const hashedPassword = await bcrypt.hash(password, saltRounds);
+  
+      // Determine the role based on the regNumber prefix
+      let result = regNumber.toLowerCase().substring(0, 3);
+      let finalRole;
+  
+      if (result === "adm") {
+        finalRole = "admin";
+      } else if (result === "lec") {
+        finalRole = "lecture";
+      } else {
+        finalRole = "student";
+      }
+  
+      // Create a new user with the hashed password
+      const newUser = new UserModel({
+        lastName,
+        initials,
+        email,
+        mobileNumber,
+        faculty,
+        regNumber,
+        password: hashedPassword, // Store the hashed password
+        role: finalRole,
+      });
+  
+      await newUser.save();
+  
+      return res.status(201).json(newUser);
+    } catch (error) {
+      console.error("Error adding user:", error);
+      return res.status(500).json({ message: "Unable to add user" });
     }
-    return res.status(201).json(user)
+  };
 
-}
 
-const getUserById = async(req, res , next)=>{
+
+const getUserById = async (req, res, next) => {
+  const id = req.params.id;
+
+  try {
+    const user = await UserModel.findById(id);
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    return res.status(200).json(user);
+  } catch (error) {
+    console.error("Error fetching user by ID:", error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+
+const deleteUserById = async (req, res, next) => {
+  const id = req.params.id;
+
+  try {
+    const user = await UserModel.findByIdAndRemove(id);
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found; cannot delete" });
+    }
+
+    return res.status(200).json(user);
+  } catch (error) {
+    console.error("Error deleting user by ID:", error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+
+const updateUser = async (req, res, next) => {
     const id = req.params.id;
-    let user;
-    try{
-        user = await UserModel.findById(id);
-    }catch(error){
-        console.log(error)
+    const {
+      lastName,
+      initials,
+      email,
+      mobileNumber,
+      faculty,
+      regNumber,
+      password, // New password
+      role,
+    } = req.body;
+  
+    try {
+      const user = await UserModel.findById(id);
+  
+      if (!user) {
+        return res.status(404).json({ message: "User not found; cannot update" });
+      }
+  
+      // Hash the new password if provided
+      if (password) {
+        const saltRounds = 10; // You can adjust the number of salt rounds as needed
+        const hashedPassword = await bcrypt.hash(password, saltRounds);
+        user.password = hashedPassword;
+      }
+  
+      // Update other user fields
+      user.lastName = lastName;
+      user.initials = initials;
+      user.email = email;
+      user.mobileNumber = mobileNumber;
+      user.faculty = faculty;
+      user.regNumber = regNumber;
+      user.role = role;
+  
+      await user.save();
+  
+      return res.status(200).json(user);
+    } catch (error) {
+      console.error("Error updating user by ID:", error);
+      return res.status(500).json({ message: "Internal server error" });
     }
-    if(!user){
-        return res.status(404).json({message: "Not Found"})
-    }
-    return res.status(200).json(user)
-}
+  };
+  
 
-const deleteUserById = async(req, res , next)=>{
-    const id = req.params.id;
-    let user;
-    try{
-        user = await UserModel.findByIdAndRemove(id);
-    }catch(error){
-        console.log(error)
-    }
-    if(!user){
-        return res.status(404).json({message: "cannot delete"})
-    }
-    return res.status(200).json(user)
-}
 
-const updateUser = async(req,res,next)=>{
-    const id= req.params.id;
-    const {lastName,initials,email,mobileNumber, faculty,
-        regNumber, password, role} = req.body;
-    let user;
-    try{
-        user = await UserModel.findByIdAndUpdate(id,{
-            lastName,initials,email,mobileNumber, faculty,
-            regNumber, password, role
-        })
-        user = await user.save();
-    } catch(error){
-        console.log(error);
-    } if(!user){
-        return res.status(404).json({message: "cannot updte"})
-    }
-    return res.status(200).json(user)
-}
-const login = async( req,res,next)=>{
-    const {regNumber, password} = req.body;
-    try{
-        user = await UserModel.findOne({regNumber: regNumber})
-    }catch(error){
-        console.log(error)
-    }
-    if(!user){
-        return res.status(404).json({message: "Not Found"})
-    }
-    if (user.password == password){
+const login = async (req, res, next) => {
+    const { regNumber, password } = req.body;
+    try {
+      const user = await UserModel.findOne({ regNumber: regNumber });
+  
+      if (!user) {
+        return res.status(404).json({ message: "Not Found" });
+      }
+  
+      // Compare the provided password with the stored hashed password
+      const passwordMatch = await bcrypt.compare(password, user.password);
+  
+      if (passwordMatch) {
         return res.status(200).json({
-            "userID" : user.id,
-            "role" : user.role
-        })
-    }else{
-        return res.status(401).json({message: "Password missmatch"})
+          userID: user.id,
+          role: user.role,
+        });
+      } else {
+        return res.status(401).json({ message: "Password mismatch" });
+      }
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({ message: "Internal server error" });
     }
-}
+  };
+  
+
+  
+
 exports.addUser = addUser;
 exports.getAllusers= getAllusers;
 exports.getUserById = getUserById;
 exports.deleteUserById=deleteUserById;
 exports.updateUser=updateUser;
 exports.login=login;
+
+
+
+
+
+
+
+
+// // error hanndled update
+// const updateUser = async (req, res, next) => {
+//     const id = req.params.id;
+//     const {
+//       lastName,
+//       initials,
+//       email,
+//       mobileNumber,
+//       faculty,
+//       regNumber,
+//       password,
+//       role,
+//     } = req.body;
+  
+//     try {
+//       const user = await UserModel.findByIdAndUpdate(
+//         id,
+//         {
+//           lastName,
+//           initials,
+//           email,
+//           mobileNumber,
+//           faculty,
+//           regNumber,
+//           password,
+//           role,
+//         },
+//         { new: true } // Ensure you get the updated document
+//       );
+  
+//       if (!user) {
+//         return res.status(404).json({ message: "User not found; cannot update" });
+//       }
+  
+//       return res.status(200).json(user);
+//     } catch (error) {
+//       console.error("Error updating user by ID:", error);
+//       return res.status(500).json({ message: "Internal server error" });
+//     }
+//   };
+
+
+
+
+
+
+// // error hanndled login  
+// const login = async( req,res,next)=>{
+//     const {regNumber, password} = req.body;
+//     try{
+//         user = await UserModel.findOne({regNumber: regNumber})
+//     }catch(error){
+//         console.log(error)
+//     }
+//     if(!user){
+//         return res.status(404).json({message: "Not Found"})
+//     }
+//     if (user.password == password){
+//         return res.status(200).json({
+//             "userID" : user.id,
+//             "role" : user.role
+//         })
+//     }else{
+//         return res.status(401).json({message: "Password missmatch"})
+//     }
+// }
+
+
+// // error hanndled create
+// const addUser = async (req, res, next) => {
+//   const {
+//     lastName,
+//     initials,
+//     email,
+//     mobileNumber,
+//     faculty,
+//     regNumber,
+//     password,
+//     role,
+//   } = req.body;
+
+//   try {
+//     // Check if a user with the same regNumber already exists
+//     const existingUser = await UserModel.findOne({ regNumber: regNumber });
+
+//     if (existingUser) {
+//       return res.status(400).json({ message: "User already registered" });
+//     }
+
+//     // Determine the role based on the regNumber prefix
+//     let result = regNumber.toLowerCase().substring(0, 3);
+//     let finalRole;
+
+//     if (result === "adm") {
+//       finalRole = "admin";
+//     } else if (result === "lec") {
+//       finalRole = "lecture";
+//     } else {
+//       finalRole = "student";
+//     }
+
+//     // Create a new user
+//     const newUser = new UserModel({
+//       lastName,
+//       initials,
+//       email,
+//       mobileNumber,
+//       faculty,
+//       regNumber,
+//       password,
+//       role: finalRole,
+//     });
+
+//     await newUser.save();
+
+//     return res.status(201).json(newUser);
+//   } catch (error) {
+//     console.error("Error adding user:", error);
+//     return res.status(500).json({ message: "Unable to add user" });
+//   }
+// };
