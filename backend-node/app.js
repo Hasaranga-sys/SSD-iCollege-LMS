@@ -43,6 +43,9 @@ const credentials = {
 //   })
 //   .catch((err) => console.log(err));
 
+// 1. go to this link on crome (" chrome://flags/#allow-insecure-localhost ")
+// 2. Enable the "Allow invalid certificates for resources loaded from localhost" flag.
+// 3. Restart Chrome.
 
 const httpsServer = https.createServer(credentials, app);
 const portNumber = 443
