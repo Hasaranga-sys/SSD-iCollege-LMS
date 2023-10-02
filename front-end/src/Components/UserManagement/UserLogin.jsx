@@ -21,7 +21,79 @@ const LoginForm = (params) => {
     userName,
     setUserName,
   } = useContext(AuthContext);
-  useEffect(() => {}, []);
+  // useEffect(() => {
+  //   // Check the user's role from the cookie when the component mounts
+  //   const userRole = getUserRoleFromCookie();
+
+  //   if (userRole === "student") {
+  //     nav("/StudentHome");
+  //   } else if (userRole === "admin") {
+  //     nav("/AdminHome");
+  //   } else if (userRole === "lecture") {
+  //     nav("/Lecture");
+  //   }
+  // }, []);
+
+  // const getUserRoleFromCookie = () => {
+  //   const cookies = document.cookie.split("; ");
+  //   for (const cookie of cookies) {
+  //     const [name, value] = cookie.split("=");
+  //     if (name === "userRole") {
+  //       return value;
+  //     }
+  //   }
+  //   return null; // Return null if the cookie doesn't exist
+  // };
+
+  useEffect(() => {
+    // Check the user's role and userID from the cookie when the component mounts
+    const { role, userID } = getUserDataFromCookie();
+    // console.log("fdsf"+userID)
+
+    if (role === "student") {
+      UserServices.getUser(userID).then((Response) => {
+        setUserName(Response.data.lastName);
+        // console.log(Response.data.lastName);
+      });
+      console.log(`User is an admin with ID ${userID}`);
+      setUserDetails( {role, userID});
+      setIsAuthenticated(true);
+          nav("/StudentHome");
+    } else if (role === "admin") {
+      UserServices.getUser(userID).then((Response) => {
+        setUserName(Response.data.lastName);
+        // console.log(Response.data.lastName);
+      });
+      console.log(`User is an admin with ID ${userID}`);
+      setUserDetails( {role, userID});
+      setIsAuthenticated(true);
+      nav("/AdminHome");
+    } else if (role === "lecture") {
+      UserServices.getUser(userID).then((Response) => {
+        setUserName(Response.data.lastName);
+        // console.log(Response.data.lastName);
+      });
+      console.log(`User is an admin with ID ${userID}`);
+      setUserDetails( {role, userID});
+      setIsAuthenticated(true);
+      nav("/Lecture");
+    }
+  }, []);
+  const getUserDataFromCookie = () => {
+    const cookies = document.cookie.split("; ");
+    let userData = { role: null, userID: null };
+    
+    for (const cookie of cookies) {
+      const [name, value] = cookie.split("=");
+      if (name === "userRole") {
+        userData.role = value;
+      } else if (name === "userID") {
+        userData.userID = value;
+      }
+    }
+  
+    return userData;
+  };
 
   const submitClicked = (e) => {
     e.preventDefault();
@@ -36,12 +108,16 @@ const LoginForm = (params) => {
         console.log(res.data);
         if (res.data.role == "student") {
           console.log("true:student");
+          document.cookie = `userRole=${res.data.role}; expires=${new Date(Date.now() + 30 * 60 * 1000).toUTCString()}`;
+          document.cookie = `userID=${res.data.userID}; expires=${new Date(Date.now() + 30 * 60 * 1000).toUTCString()}`;
           setUserDetails(res.data);
           setIsAuthenticated(true);
           usernamesetter(res.data);
           nav("/StudentHome");
         } else if (res.data.role == "admin") {
           console.log("true:admin");
+          document.cookie = `userRole=${res.data.role}; expires=${new Date(Date.now() + 30 * 60 * 1000).toUTCString()}`;
+          document.cookie = `userID=${res.data.userID}; expires=${new Date(Date.now() + 30 * 60 * 1000).toUTCString()}`;
           setUserDetails(res.data);
           setIsAuthenticated(true);
           usernamesetter(res.data);
@@ -49,6 +125,8 @@ const LoginForm = (params) => {
           nav("/AdminHome");
         } else if (res.data.role == "lecture") {
           console.log("true:lecture");
+          document.cookie = `userRole=${res.data.role}; expires=${new Date(Date.now() + 30 * 60 * 1000).toUTCString()}`;
+          document.cookie = `userID=${res.data.userID}; expires=${new Date(Date.now() + 30 * 60 * 1000).toUTCString()}`;
           setUserDetails(res.data);
           setIsAuthenticated(true);
           usernamesetter(res.data);
@@ -77,71 +155,6 @@ const LoginForm = (params) => {
     });
   };
   return (
-    // <div className="container">
-    //   <br />
-    //   <br />
-    //   <br />
-    //   <br />
-    //   <div className="card col-md-6 offset-md-3 offset-md-3"
-    //   style={{borderRadius:30}}>
-    //     <div className="card-body shadow-lg"
-    //     style={{borderRadius:30}}>
-    //       <div>
-    //         <center>
-    //           <h1>Login</h1>
-    //         </center>
-    //       </div>
-
-    //       <form onSubmit={submitClicked}>
-    //         <div className="form-group mt-5 row ">
-    //           <label className="col-sm-4  col-form-label">
-    //             Registeration Number :{" "}
-    //           </label>
-    //           <div className="col-sm-12 w-50 ">
-    //             <input
-    //               type="text"
-    //               className="form-control"
-    //               onChange={(e) => {
-    //                 setregNumber(e.target.value);
-    //               }}
-    //               required
-    //             ></input>
-    //           </div>
-    //         </div>
-    //         <br></br>
-    //         <div className="form-group  row">
-    //           <label className="col-sm-4  col-form-label">Password : </label>
-    //           <div className="col-sm-12  w-50">
-    //             <input
-    //               type="password"
-    //               className="form-control"
-    //               onChange={(e) => {
-    //                 setpassword(e.target.value);
-    //               }}
-    //               required
-    //             />
-    //           </div>
-    //         </div>
-    //         <br />
-    //         <div className="text-center">
-    //           <input
-    //             type="submit"
-    //             value="Sign in"
-    //             className="btn btn-primary "
-    //           />
-    //         </div>
-    //         <br />
-    //         <div className="text-center">
-    //           Create An Account{" "}
-    //           <Link to="/user/-1" className="text-center">
-    //             Sign up{" "}
-    //           </Link>
-    //         </div>
-    //         <br />
-    //       </form>
-    //     </div>
-    //   </div>
-    // </div>
     <div>
       <div class="boxlog mt-5">
         <h1>Sign In</h1>

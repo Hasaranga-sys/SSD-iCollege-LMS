@@ -20,17 +20,74 @@ const NavBar = () => {
   } = useContext(AuthContext);
   const [navbar, setNavbar] = useState();
   const navigate = useNavigate();
+  const [role, setRole] = useState(null);
+  const [userID, setUserID] = useState(null);
+  // const { role, userID } = getUserDataFromCookie();
+
+  // useEffect(async () => {
+  //   await getUserDataFromCookie();
+  //   UserServices.getUser(userID).then((Response) => {
+      
+  //     setUserName(Response.data.lastName);
+  //     setIsAuthenticated(true)
+  //     // console.log(Response.data.lastName);
+  //   });
+    
+  // }, []);
+  // const getUserDataFromCookie  = async () => {
+  //   const cookies = document.cookie.split("; ");
+  //   let userData = { role: null, userID: null };
+    
+  //   for (const cookie of cookies) {
+  //     const [name, value] = cookie.split("=");
+  //     if (name === "userRole") {
+  //       userData.role = value;
+  //       setRole(value)
+  //     } else if (name === "userID") {
+  //       userData.userID = value;
+  //       setUserID(value)
+  //     }
+  //   }
+  
+  //   return userData;
+  // };
+
 
   useEffect(() => {
-    // if (isAuthenticated) {
-    //   console.log("true un awelawa");
-    //   // setNavbar(AuthenticatedNavBar());
-    // } else {
-    //   console.log("dan false");
-    //   // setNavbar(null);
-    // }
-    // console.log(isAuthenticated);
-  });
+    const getUserDataFromCookie = async () => {
+      const cookies = document.cookie.split("; ");
+      let userData = { role: null, userID: null };
+
+      for (const cookie of cookies) {
+        const [name, value] = cookie.split("=");
+        if (name === "userRole") {
+          userData.role = value;
+          setRole(value);
+        } else if (name === "userID") {
+          userData.userID = value;
+          setUserID(value);
+        }
+      }
+
+      return userData;
+    };
+
+    const fetchData = async () => {
+      const userData = await getUserDataFromCookie();
+      if (userData.userID) {
+        try {
+          const response = await UserServices.getUser(userData.userID);
+          setUserName(response.data.lastName);
+          setIsAuthenticated(true);
+        } catch (error) {
+          // Handle any errors from the API request here.
+          console.error("Error fetching user data:", error);
+        }
+      }
+    };
+
+    fetchData();
+  }, [setIsAuthenticated, setUserName]);
 
   const AuthenticatedNavBar = () => {
     return (
@@ -42,7 +99,8 @@ const NavBar = () => {
             </a>
           </div>
           <ul class="nav-list">
-            {userDetails.role == "admin" ? (
+            {/* {userDetails.role == "admin" ? ( */}
+            {(role === "admin" || userDetails.role === "admin") ? (
               <>
                 <li>
                   <a
@@ -81,7 +139,9 @@ const NavBar = () => {
                   </a>
                 </li>
               </>
-            ) : userDetails.role == "student" ? (
+            // ) : userDetails.role == "student" ? (
+              // ) : role == "student" ? (
+                ) : (role === "student" || userDetails.role === "student") ? (
               <>
                 <li>
                   <a
@@ -93,7 +153,9 @@ const NavBar = () => {
                   </a>
                 </li>
               </>
-            ) : userDetails.role == "lecture" ? (
+            // ) : userDetails.role == "lecture" ? (
+              // ) : role == "lecture" ? (
+                ) : (role === "lecture" || userDetails.role === "lecture") ? (
               <>
                 <li>
                   <a
@@ -117,6 +179,9 @@ const NavBar = () => {
                   setUserDetails(null);
                   setIsAuthenticated(false);
                   setUserName(null);
+                  document.cookie = "userRole=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+                  document.cookie = "userID=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+
                 }}
               >
                 Logout
