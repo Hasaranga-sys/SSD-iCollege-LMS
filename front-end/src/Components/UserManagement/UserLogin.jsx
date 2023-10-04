@@ -135,12 +135,27 @@ const LoginForm = (params) => {
         }
       })
       .catch((err) => {
-        Swal.fire({
-          icon: "error",
-          title: "Login Failed",
-          text: "User Name OR Password In correct!",
-        });
-        console.log("failed");
+        if (err.message === "Request failed with status code 429"){
+          // console.log("me araka");
+
+          Swal.fire({
+            icon: "error",
+            title: "Too Many Attempts",
+            text: "please try again after 15 seconds",
+          });
+          console.log("too many tries");
+
+        } else {
+          Swal.fire({
+            icon: "error",
+            title: "Login Failed",
+            text: "User Name OR Password In correct!",
+          });
+          console.log("failed with incorrct password");
+
+        }
+        
+        // console.log(err.message);
       });
     // nav("/students")
 
