@@ -17,11 +17,19 @@ const NavBar = () => {
     setIsAuthenticated,
     userName,
     setUserName,
+    token,
+    setToken
   } = useContext(AuthContext);
   const [navbar, setNavbar] = useState();
   const navigate = useNavigate();
   const [role, setRole] = useState(null);
   const [userID, setUserID] = useState(null);
+
+  const config = {
+    headers: { 'Authorization': 'Bearer ' + token }
+};
+
+console.log("token", token);
   // const { role, userID } = getUserDataFromCookie();
 
   // useEffect(async () => {
@@ -54,8 +62,15 @@ const NavBar = () => {
 
 
   useEffect(() => {
+    console.log("token", token);
+    if(!token){
+      navigate("/");
+    }
+    
     const getUserDataFromCookie = async () => {
       const cookies = document.cookie.split("; ");
+
+      
       let userData = { role: null, userID: null };
 
       for (const cookie of cookies) {
@@ -73,10 +88,12 @@ const NavBar = () => {
     };
 
     const fetchData = async () => {
+      console.log("config");
       const userData = await getUserDataFromCookie();
       if (userData.userID) {
         try {
-          const response = await UserServices.getUser(userData.userID);
+          console.log("mekaa")
+          const response = await UserServices.getUser(userData.userID, config);
           setUserName(response.data.lastName);
           setIsAuthenticated(true);
         } catch (error) {
@@ -179,8 +196,10 @@ const NavBar = () => {
                   setUserDetails(null);
                   setIsAuthenticated(false);
                   setUserName(null);
+                  setToken(null);
                   document.cookie = "userRole=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
                   document.cookie = "userID=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+                  document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
 
                 }}
               >
@@ -209,6 +228,7 @@ const NavBar = () => {
                   setUserDetails(null);
                   setIsAuthenticated(false);
                   setUserName(null);
+                  setToken(null);
                 }}
               >
                 log in

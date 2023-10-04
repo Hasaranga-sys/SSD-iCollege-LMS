@@ -24,16 +24,25 @@
 
 import axios from "axios";
 import { BASE_URL } from "../../config.js"
+// import { useContext } from "react";
+// import { AuthContext } from "../UserManagement/AuthContext.js"; 
 
 // Define a constant variable for the base URL
 // const BASE_URL = "https://localhost:443";
 
+// const { userDetails, setUserDetails, isAuthenticated, setIsAuthenticated, token, setToken } =
+// useContext(AuthContext);
+
+// const config = {
+//   headers: { 'Authorization': 'Bearer ' + token }
+// };
+
 class UserServices {
-  getAllUsers() {
-    return axios.get(`${BASE_URL}/user/`);
+  getAllUsers(config) {
+    return axios.get(`${BASE_URL}/user/`, config);
   }
-  getUser(id) {
-    return axios.get(`${BASE_URL}/user/${id}`);
+  getUser(id, config) {
+    return axios.get(`${BASE_URL}/user/${id}`, config);
   }
   createUser(user) {
     return axios.post(`${BASE_URL}/user/`, user);

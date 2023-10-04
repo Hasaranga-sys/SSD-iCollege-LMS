@@ -1,8 +1,18 @@
 const UserModel = require("../Model/UserModel");
 
+const jwt = require('jsonwebtoken')
 const bcrypt = require('bcrypt');
+var cookieParser = require('cookie-parser')
 
+//
 const getAllusers = async (req, res, next) => {
+  const userModel = req.user
+  console.log("userModel", userModel)
+
+  if (userModel.role != "admin") {
+    return res.status(401).json({ message: "Invalid user!" });
+  }
+  
   try {
     const users = await UserModel.find();
     
@@ -17,7 +27,7 @@ const getAllusers = async (req, res, next) => {
   }
 };
 
-
+//register user
 const addUser = async (req, res, next) => {
     const {
       lastName,
@@ -31,6 +41,11 @@ const addUser = async (req, res, next) => {
     } = req.body;
   
     try {
+
+      if (!lastName || ! initials || !email || !mobileNumber || !faculty || !regNumber || !password ) {
+        return res.status(400).json({ message: "Please add all fields" });
+      }
+
       // Check if a user with the same regNumber already exists
       const existingUser = await UserModel.findOne({ regNumber: regNumber });
   
@@ -164,6 +179,7 @@ const login = async (req, res, next) => {
     const { regNumber, password } = req.body;
     try {
       const user = await UserModel.findOne({ regNumber: regNumber });
+      console.log("user", user)
   
       if (!user) {
         return res.status(404).json({ message: "Not Found" });
@@ -173,9 +189,12 @@ const login = async (req, res, next) => {
       const passwordMatch = await bcrypt.compare(password, user.password);
   
       if (passwordMatch) {
+        let tokenGen = generateJWTToken(user.id, user.regNumber, user.role);
+        res.cookie('token', tokenGen)
         return res.status(200).json({
           userID: user.id,
           role: user.role,
+          token: tokenGen
         });
       } else {
         return res.status(401).json({ message: "Password mismatch" });
@@ -185,6 +204,14 @@ const login = async (req, res, next) => {
       return res.status(500).json({ message: "Internal server error" });
     }
   };
+
+let jwt_sec = 'abc123';  
+const generateJWTToken = (id, regId, role) =>{
+  return jwt.sign({id, regId, role}, jwt_sec,{
+    expiresIn: '2d',
+  })
+}
+
   
 
   

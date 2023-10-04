@@ -16,16 +16,25 @@ const UserList = () => {
   const [adminFilter, setAdminFilter] = useState("");
   const [category, setCategory] = useState("");
   const navigate = useNavigate();
-  const { userDetails, setUserDetails, isAuthenticated, setIsAuthenticated } =
+  const { userDetails, setUserDetails, isAuthenticated, setIsAuthenticated, token, setToken } =
     useContext(AuthContext);
 
+  const config = {
+      headers: { 'Authorization': 'Bearer ' + token }
+  };
+
   useEffect(() => {
-    UserServices.getAllUsers().then((res) => {
+    if (!token) {
+      navigate("/");
+    }
+    UserServices.getAllUsers(config).then((res) => {
       setUser(res.data);
     });
     // console.log(userDetails);
     // console.log(isAuthenticated);
-  });
+  },[]);
+
+ 
 
   const AddStudent = (e) => {
     e.preventDefault();

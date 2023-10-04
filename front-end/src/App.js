@@ -1,5 +1,5 @@
 import React from "react";
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, Navigate } from "react-router-dom";
 import AddLibararyItem from "./Components/Admin/AddLibararyItem";
 import AdminHome from "./Components/Admin/AdminHome";
 
@@ -26,8 +26,18 @@ import LectureAdminHome from "./Components/Lecture/LectureAdminHome";
 import AnnouncemntViewPro from "./Components/Admin/AnnouncemntViewPro";
 import Foot from "./Components/Foot";
 import StudentLectuersView from "./Components/Student/StudentLectuersView";
+import { useContext } from "react";
+import { AuthContext } from "./Components/UserManagement/AuthContext"; 
 
 function App() {
+
+  const { userDetails, setUserDetails, isAuthenticated, setIsAuthenticated, token, setToken } =
+  useContext(AuthContext);
+
+  const config = {
+      headers: { 'Authorization': 'Bearer ' + token }
+  };
+
   return (
     <div className="App">
       <React.Fragment>
@@ -39,20 +49,20 @@ function App() {
             <Route path="/" element={<LoginForm />} exact />
 
             {/* admin */}
-            <Route path="/AdminHome" element={<AdminHome />} exact />
+            <Route path="/AdminHome" element={token ? <AdminHome /> : <Navigate to="/"/>}/>
             <Route
               path="/AdminHome/NoticeTable"
-              element={<NoticeTable />}
+              element={token ? <NoticeTable /> : <Navigate to="/"/>}
               exact
             />
             <Route
               path="/AdminHome/NoticeTable/NoticeForm"
-              element={<NoticeForm />}
+              element={token ? <NoticeForm /> : <Navigate to="/"/>}
               exact
             />
             <Route
               path="/AdminHome/NoticeTable/NoticeForm/:_id"
-              element={<NoticeForm />}
+              element={token ? <NoticeForm /> : <Navigate to="/"/>}
               exact
             />
             <Route path="/annvp/:_id" element={<AnnouncemntViewPro />} exact />
