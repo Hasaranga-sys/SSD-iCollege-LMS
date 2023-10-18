@@ -27,42 +27,80 @@ import AnnouncemntViewPro from "./Components/Admin/AnnouncemntViewPro";
 import Foot from "./Components/Foot";
 import StudentLectuersView from "./Components/Student/StudentLectuersView";
 import { useContext } from "react";
-import { AuthContext } from "./Components/UserManagement/AuthContext"; 
+import { AuthContext } from "./Components/UserManagement/AuthContext";
+import { useEffect, useState } from "react";
 
 function App() {
-
-  const { userDetails, setUserDetails, isAuthenticated, setIsAuthenticated, token, setToken } =
-  useContext(AuthContext);
+  const {
+    userDetails,
+    setUserDetails,
+    isAuthenticated,
+    setIsAuthenticated,
+    token,
+    setToken,
+  } = useContext(AuthContext);
 
   const config = {
-      headers: { 'Authorization': 'Bearer ' + token }
+    headers: { Authorization: "Bearer " + token },
   };
+
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const getUser = () => {
+      fetch("https://localhost:443/auth/login/success", {
+        method: "GET",
+        credentials: "include",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+          "Access-Control-Allow-Credentials": true,
+        },
+      })
+        .then((response) => {
+          if (response.status === 200) return response.json();
+          throw new Error("Authentication has failed!");
+        })
+        .then((resObject) => {
+          setUser(resObject.user);
+        })
+        .catch((err) => {
+          console.error("Fetch Error:", err);
+        });
+    };
+    getUser();
+  }, []);
+
+  console.log(user);
 
   return (
     <div className="App">
       <React.Fragment>
         <header>
-          <NavBar />
+          <NavBar user={user} />
         </header>
         <main>
           <Routes>
             <Route path="/" element={<LoginForm />} exact />
 
             {/* admin */}
-            <Route path="/AdminHome" element={token ? <AdminHome /> : <Navigate to="/"/>}/>
+            <Route
+              path="/AdminHome"
+              element={token ? <AdminHome /> : <Navigate to="/" />}
+            />
             <Route
               path="/AdminHome/NoticeTable"
-              element={token ? <NoticeTable /> : <Navigate to="/"/>}
+              element={token ? <NoticeTable /> : <Navigate to="/" />}
               exact
             />
             <Route
               path="/AdminHome/NoticeTable/NoticeForm"
-              element={token ? <NoticeForm /> : <Navigate to="/"/>}
+              element={token ? <NoticeForm /> : <Navigate to="/" />}
               exact
             />
             <Route
               path="/AdminHome/NoticeTable/NoticeForm/:_id"
-              element={token ? <NoticeForm /> : <Navigate to="/"/>}
+              element={token ? <NoticeForm /> : <Navigate to="/" />}
               exact
             />
             <Route path="/annvp/:_id" element={<AnnouncemntViewPro />} exact />

@@ -1,29 +1,20 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const app = express();
-const cors = require('cors');
+const cors = require("cors");
 const router = require("./Router/NoticeRouter");
 const resour = require("./Router/LibraryItemRouter");
 const userRouter = require("./Router/UserRouter");
 const libraryItemRouter = require("./Router/LibraryItemRouter");
 const LectureRouter = require("./Router/LectureRouter");
-const https = require('https');
-const fs = require('fs');
+const https = require("https");
+const fs = require("fs");
+const passport = require("passport");
+const cookieSession = require("cookie-session");
+const authRoute = require("./Router/auth");
 
-app.use(express.json());
-app.use(cors());
-app.use("/notice", router);
-app.use("/user", userRouter);
-app.use("/Lecture", LectureRouter);
-
-// app.use("/libarary", libraryItemRouter);
-//app.use("/resource",resour )
-app.use(cors());
-app.use("/pdf", require("./Router/LibraryItemRouter"));
-// app.use("/lecture", require("./Router/LectureRouter"));
-
-const privateKey = fs.readFileSync('./Auth/auth-key.pem', 'utf8');
-const certificate = fs.readFileSync('./Auth/auth-cert.pem', 'utf8');
+const privateKey = fs.readFileSync("./Auth/auth-key.pem", "utf8");
+const certificate = fs.readFileSync("./Auth/auth-cert.pem", "utf8");
 // const ca = fs.readFileSync('path/to/intermediate-certificate.pem', 'utf8'); // If you have intermediate certificates
 
 const credentials = {
@@ -31,6 +22,35 @@ const credentials = {
   cert: certificate,
   // ca: ca, // Include this line if you have intermediate certificates
 };
+
+// Set up CORS for your app with the allowed origin and credentials.
+app.use(
+  cors({
+    origin: "http://localhost:3000",
+    credentials: true,
+  })
+);
+
+app.use(express.json());
+app.use(passport.initialize());
+app.use(passport.session());
+app.use(
+  cookieSession({
+    name: "session",
+    keys: ["lama"],
+    maxAge: 24 * 60 * 60 * 1000, // 24 hours
+  })
+);
+
+// app.use("/libarary", libraryItemRouter);
+//app.use("/resource",resour )
+// app.use("/lecture", require("./Router/LectureRouter"));
+
+app.use("/auth", authRoute);
+app.use("/notice", router);
+app.use("/user", userRouter);
+app.use("/Lecture", LectureRouter);
+app.use("/pdf", require("./Router/LibraryItemRouter"));
 
 // mongoose
 //   .connect(
@@ -48,14 +68,14 @@ const credentials = {
 // 3. Restart Chrome.
 
 const httpsServer = https.createServer(credentials, app);
-const portNumber = 443
+const portNumber = 443;
 
 mongoose
-  .connect('mongodb+srv://root:root@cluster0.cfjqiom.mongodb.net/')
-  .then(() => console.log('Connected to database'))
+  .connect("mongodb+srv://root:root@cluster0.cfjqiom.mongodb.net/")
   .then(() => {
+    console.log("Connected to the database");
     httpsServer.listen(portNumber, () => {
-      console.log('Server is running on HTTPS port ' + portNumber);
+      console.log("Server is running on HTTPS port " + portNumber);
     });
   })
   .catch((err) => console.log(err));

@@ -5,7 +5,7 @@ $breakpoint determines at which width the media query breakpoint will take effec
 */
 
 body {
-  background-color: #63D6E0;
+  background-color: #63d6e0;
 }
 nav {
   float: right;
@@ -36,7 +36,7 @@ nav ul li a:hover {
 }
 nav ul li a:not(:only-child):after {
   padding-left: 4px;
-  content: ' ▾';
+  content: " ▾";
 }
 nav ul li ul li {
   min-width: 190px;
@@ -104,7 +104,7 @@ nav ul li ul li a {
   background: #463f3f;
   position: absolute;
   display: block;
-  content: '';
+  content: "";
   transition: all 300ms ease-in;
 }
 #nav-toggle span:before {
@@ -116,7 +116,8 @@ nav ul li ul li a {
 #nav-toggle.active span {
   background-color: transparent;
 }
-#nav-toggle.active span:before, #nav-toggle.active span:after {
+#nav-toggle.active span:before,
+#nav-toggle.active span:after {
   top: 0;
 }
 #nav-toggle.active span:before {
@@ -152,11 +153,25 @@ nav ul li ul li a {
   padding-left: -500px;
   float: left;
   line-height: 70px;
-  
+
   font-size: 1.4em;
 }
 .brand a,
 .brand a:visited {
   color: #463f3f;
   text-decoration: none;
+}
+.listItem {
+  margin-right: 20px;
+  font-weight: 500;
+  cursor: pointer;
+  padding-top: 15px;
+  /* line-height: 20px; */
+}
+
+.avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
 }

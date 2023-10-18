@@ -9,7 +9,7 @@ import { useState } from "react";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
-const NavBar = () => {
+const NavBar = ({ user }) => {
   const {
     userDetails,
     setUserDetails,
@@ -18,7 +18,7 @@ const NavBar = () => {
     userName,
     setUserName,
     token,
-    setToken
+    setToken,
   } = useContext(AuthContext);
   const [navbar, setNavbar] = useState();
   const navigate = useNavigate();
@@ -26,26 +26,30 @@ const NavBar = () => {
   const [userID, setUserID] = useState(null);
 
   const config = {
-    headers: { 'Authorization': 'Bearer ' + token }
-};
+    headers: { Authorization: "Bearer " + token },
+  };
 
-console.log("token", token);
+  console.log("token", token);
+
+  const logout = () => {
+    window.open("https://localhost:443/auth/logout", "_self");
+  };
   // const { role, userID } = getUserDataFromCookie();
 
   // useEffect(async () => {
   //   await getUserDataFromCookie();
   //   UserServices.getUser(userID).then((Response) => {
-      
+
   //     setUserName(Response.data.lastName);
   //     setIsAuthenticated(true)
   //     // console.log(Response.data.lastName);
   //   });
-    
+
   // }, []);
   // const getUserDataFromCookie  = async () => {
   //   const cookies = document.cookie.split("; ");
   //   let userData = { role: null, userID: null };
-    
+
   //   for (const cookie of cookies) {
   //     const [name, value] = cookie.split("=");
   //     if (name === "userRole") {
@@ -56,21 +60,19 @@ console.log("token", token);
   //       setUserID(value)
   //     }
   //   }
-  
+
   //   return userData;
   // };
 
-
   useEffect(() => {
     console.log("token", token);
-    if(!token){
-      navigate("/");
-    }
-    
+    // if(!token){
+    //   navigate("/");
+    // }
+
     const getUserDataFromCookie = async () => {
       const cookies = document.cookie.split("; ");
 
-      
       let userData = { role: null, userID: null };
 
       for (const cookie of cookies) {
@@ -92,7 +94,7 @@ console.log("token", token);
       const userData = await getUserDataFromCookie();
       if (userData.userID) {
         try {
-          console.log("mekaa")
+          console.log("mekaa");
           const response = await UserServices.getUser(userData.userID, config);
           setUserName(response.data.lastName);
           setIsAuthenticated(true);
@@ -117,7 +119,7 @@ console.log("token", token);
           </div>
           <ul class="nav-list">
             {/* {userDetails.role == "admin" ? ( */}
-            {(role === "admin" || userDetails.role === "admin") ? (
+            {role === "admin" || userDetails.role === "admin" ? (
               <>
                 <li>
                   <a
@@ -156,9 +158,9 @@ console.log("token", token);
                   </a>
                 </li>
               </>
-            // ) : userDetails.role == "student" ? (
-              // ) : role == "student" ? (
-                ) : (role === "student" || userDetails.role === "student") ? (
+            ) : // ) : userDetails.role == "student" ? (
+            // ) : role == "student" ? (
+            role === "student" || userDetails.role === "student" ? (
               <>
                 <li>
                   <a
@@ -170,9 +172,9 @@ console.log("token", token);
                   </a>
                 </li>
               </>
-            // ) : userDetails.role == "lecture" ? (
-              // ) : role == "lecture" ? (
-                ) : (role === "lecture" || userDetails.role === "lecture") ? (
+            ) : // ) : userDetails.role == "lecture" ? (
+            // ) : role == "lecture" ? (
+            role === "lecture" || userDetails.role === "lecture" ? (
               <>
                 <li>
                   <a
@@ -197,10 +199,12 @@ console.log("token", token);
                   setIsAuthenticated(false);
                   setUserName(null);
                   setToken(null);
-                  document.cookie = "userRole=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-                  document.cookie = "userID=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-                  document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-
+                  document.cookie =
+                    "userRole=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+                  document.cookie =
+                    "userID=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+                  document.cookie =
+                    "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
                 }}
               >
                 Logout
@@ -220,21 +224,42 @@ console.log("token", token);
               <span></span>
             </a>
           </div>
-          <ul class="nav-list">
-            <li>
-              <a
-                href="/"
-                onClick={() => {
-                  setUserDetails(null);
-                  setIsAuthenticated(false);
-                  setUserName(null);
-                  setToken(null);
-                }}
-              >
-                log in
-              </a>
-            </li>
-          </ul>
+          {user ? (
+            <ul className="list">
+              <li className="listItem">
+                <img src={user.photos[0].value} alt="" className="avatar" />
+              </li>
+              <li className="listItem">{user.displayName}</li>
+              <li>
+                <a
+                  href="/"
+                  onClick={() => {
+                    logout();
+                    setUserDetails(null);
+                    setIsAuthenticated(false);
+                    setUserName(null);
+                  }}
+                >
+                  Logout
+                </a>
+              </li>
+            </ul>
+          ) : (
+            <ul class="nav-list">
+              <li>
+                <a
+                  href="/"
+                  onClick={() => {
+                    setUserDetails(null);
+                    setIsAuthenticated(false);
+                    setUserName(null);
+                  }}
+                >
+                  log in
+                </a>
+              </li>
+            </ul>
+          )}
         </nav>
       </>
     );

@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import Swal from "sweetalert2";
 import "../UserManagement/Login.css";
 import NavBar from "../NavBar";
+import GoogleButton from "react-google-button";
 
 import { useContext } from "react";
 import { AuthContext } from "./AuthContext";
@@ -21,7 +22,7 @@ const LoginForm = (params) => {
     userName,
     setUserName,
     token,
-    setToken
+    setToken,
   } = useContext(AuthContext);
 
   const [Ntoken, setNtoken] = useState("");
@@ -49,22 +50,22 @@ const LoginForm = (params) => {
   //   return null; // Return null if the cookie doesn't exist
   // };
   const config = {
-    headers: { 'Authorization': 'Bearer ' + token }
-};
+    headers: { Authorization: "Bearer " + token },
+  };
 
   useEffect(() => {
     // Check the user's role and userID from the cookie when the component mounts
     const { role, userID, token } = getUserDataFromCookie();
-     
+
     if (role === "student") {
       UserServices.getUser(userID, token).then((Response) => {
         setUserName(Response.data.lastName);
         // console.log(Response.data.lastName);
       });
       console.log(`User is an admin with ID ${userID}`);
-      setUserDetails( {role, userID});
+      setUserDetails({ role, userID });
       setIsAuthenticated(true);
-          nav("/StudentHome");
+      nav("/StudentHome");
     } else if (role === "admin") {
       // console.log("userID", userID);
       // console.log("token", token);
@@ -75,7 +76,7 @@ const LoginForm = (params) => {
       //    //console.log(Response.data.lastName);
       // });
       console.log(`User is an admin with ID ${userID}`);
-      setUserDetails( {role, userID});
+      setUserDetails({ role, userID });
       setIsAuthenticated(true);
       nav("/AdminHome");
     } else if (role === "lecture") {
@@ -84,7 +85,7 @@ const LoginForm = (params) => {
         // console.log(Response.data.lastName);
       });
       console.log(`User is an admin with ID ${userID}`);
-      setUserDetails( {role, userID});
+      setUserDetails({ role, userID });
       setIsAuthenticated(true);
       nav("/Lecture");
     }
@@ -92,8 +93,8 @@ const LoginForm = (params) => {
   const getUserDataFromCookie = () => {
     const cookies = document.cookie.split("; ");
     console.log("cookies", cookies);
-    let userData = { role: null, userID: null, token : null };
-    
+    let userData = { role: null, userID: null, token: null };
+
     for (const cookie of cookies) {
       const [name, value] = cookie.split("=");
       if (name === "userRole") {
@@ -104,7 +105,7 @@ const LoginForm = (params) => {
         userData.token = value;
       }
     }
-  
+
     return userData;
   };
 
@@ -121,9 +122,15 @@ const LoginForm = (params) => {
         console.log(res.data);
         if (res.data.role == "student") {
           console.log("true:student");
-          document.cookie = `userRole=${res.data.role}; expires=${new Date(Date.now() + 30 * 60 * 1000).toUTCString()}`;
-          document.cookie = `userID=${res.data.userID}; expires=${new Date(Date.now() + 30 * 60 * 1000).toUTCString()}`;
-          document.cookie = `token=${res.data.token}; expires=${new Date(Date.now() + 30 * 60 * 1000).toUTCString()}`;
+          document.cookie = `userRole=${res.data.role}; expires=${new Date(
+            Date.now() + 30 * 60 * 1000
+          ).toUTCString()}`;
+          document.cookie = `userID=${res.data.userID}; expires=${new Date(
+            Date.now() + 30 * 60 * 1000
+          ).toUTCString()}`;
+          document.cookie = `token=${res.data.token}; expires=${new Date(
+            Date.now() + 30 * 60 * 1000
+          ).toUTCString()}`;
           setUserDetails(res.data);
           setIsAuthenticated(true);
           usernamesetter(res.data);
@@ -131,23 +138,35 @@ const LoginForm = (params) => {
           nav("/StudentHome");
         } else if (res.data.role == "admin") {
           console.log("true:admin");
-          document.cookie = `userRole=${res.data.role}; expires=${new Date(Date.now() + 30 * 60 * 1000).toUTCString()}`;
-          document.cookie = `userID=${res.data.userID}; expires=${new Date(Date.now() + 30 * 60 * 1000).toUTCString()}`;
-          document.cookie = `token=${res.data.token}; expires=${new Date(Date.now() + 30 * 60 * 1000).toUTCString()}`;
+          document.cookie = `userRole=${res.data.role}; expires=${new Date(
+            Date.now() + 30 * 60 * 1000
+          ).toUTCString()}`;
+          document.cookie = `userID=${res.data.userID}; expires=${new Date(
+            Date.now() + 30 * 60 * 1000
+          ).toUTCString()}`;
+          document.cookie = `token=${res.data.token}; expires=${new Date(
+            Date.now() + 30 * 60 * 1000
+          ).toUTCString()}`;
           setUserDetails(res.data);
           setIsAuthenticated(true);
           usernamesetter(res.data);
-          console.log("to",res.data.token )
+          console.log("to", res.data.token);
           setToken(res.data.token);
-          setNtoken(res.data.token)
-          console.log("TO",Ntoken);
+          setNtoken(res.data.token);
+          console.log("TO", Ntoken);
           // nav("/AdminHome")
           nav("/AdminHome");
         } else if (res.data.role == "lecture") {
           console.log("true:lecture");
-          document.cookie = `userRole=${res.data.role}; expires=${new Date(Date.now() + 30 * 60 * 1000).toUTCString()}`;
-          document.cookie = `userID=${res.data.userID}; expires=${new Date(Date.now() + 30 * 60 * 1000).toUTCString()}`;
-          document.cookie = `token=${res.data.token}; expires=${new Date(Date.now() + 30 * 60 * 1000).toUTCString()}`;
+          document.cookie = `userRole=${res.data.role}; expires=${new Date(
+            Date.now() + 30 * 60 * 1000
+          ).toUTCString()}`;
+          document.cookie = `userID=${res.data.userID}; expires=${new Date(
+            Date.now() + 30 * 60 * 1000
+          ).toUTCString()}`;
+          document.cookie = `token=${res.data.token}; expires=${new Date(
+            Date.now() + 30 * 60 * 1000
+          ).toUTCString()}`;
           setUserDetails(res.data);
           setIsAuthenticated(true);
           usernamesetter(res.data);
@@ -157,7 +176,7 @@ const LoginForm = (params) => {
         }
       })
       .catch((err) => {
-        if (err.message === "Request failed with status code 429"){
+        if (err.message === "Request failed with status code 429") {
           // console.log("me araka");
 
           Swal.fire({
@@ -166,7 +185,6 @@ const LoginForm = (params) => {
             text: "please try again after 15 seconds",
           });
           console.log("too many tries");
-
         } else {
           Swal.fire({
             icon: "error",
@@ -174,9 +192,8 @@ const LoginForm = (params) => {
             text: "User Name OR Password In correct!",
           });
           console.log("failed with incorrct password");
-
         }
-        
+
         // console.log(err.message);
       });
     // nav("/students")
@@ -185,15 +202,20 @@ const LoginForm = (params) => {
   };
 
   const usernamesetter = (e) => {
-     console.log(e.userID);
-     console.log(config);
-     console.log(token);
+    console.log(e.userID);
+    console.log(config);
+    console.log(token);
     UserServices.getUser(e.userID, config).then((Response) => {
       console.log("MMM");
       setUserName(Response.data.lastName);
-       console.log(Response.data.lastName);
+      console.log(Response.data.lastName);
     });
   };
+
+  const google = () => {
+    window.open("https://localhost:443/auth/google", "_self");
+  };
+
   return (
     <div>
       <div class="boxlog mt-5">
@@ -224,6 +246,11 @@ const LoginForm = (params) => {
 
           <input type="submit" value="Sign in" className="sub " />
         </form>
+        <div class="my-3 row d-flex justify-content-center">
+          <div class="col-5">
+            <GoogleButton onClick={google} />
+          </div>
+        </div>
 
         <p>
           Don't have an accunt? <a href="/user/-1"> Create Account</a>
