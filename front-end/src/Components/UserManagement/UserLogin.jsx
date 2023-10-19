@@ -26,6 +26,7 @@ const LoginForm = (params) => {
   } = useContext(AuthContext);
 
   const [Ntoken, setNtoken] = useState("");
+
   // useEffect(() => {
   //   // Check the user's role from the cookie when the component mounts
   //   const userRole = getUserRoleFromCookie();
@@ -58,7 +59,8 @@ const LoginForm = (params) => {
     const { role, userID, token } = getUserDataFromCookie();
 
     if (role === "student") {
-      UserServices.getUser(userID, token).then((Response) => {
+      let cc = {headers: { Authorization: "Bearer " + token }};
+      UserServices.getUser(userID, cc).then((Response) => {
         setUserName(Response.data.lastName);
         // console.log(Response.data.lastName);
       });
@@ -67,20 +69,22 @@ const LoginForm = (params) => {
       setIsAuthenticated(true);
       nav("/StudentHome");
     } else if (role === "admin") {
-      // console.log("userID", userID);
-      // console.log("token", token);
-      // UserServices.getUser(userID, token).then((Response) => {
-      //   console.log("userID", userID);
-      //   console.log("token", token);
-      //   setUserName(Response.data.lastName);
-      //    //console.log(Response.data.lastName);
-      // });
+      console.log("userID", userID);
+      console.log("token111", token);
+      let cc = {headers: { Authorization: "Bearer " + token }};
+      UserServices.getUser(userID, cc).then((Response) => {
+        console.log("userID", userID);
+        console.log("token", token);
+        setUserName(Response.data.lastName);
+         //console.log(Response.data.lastName);
+      });
       console.log(`User is an admin with ID ${userID}`);
       setUserDetails({ role, userID });
       setIsAuthenticated(true);
       nav("/AdminHome");
     } else if (role === "lecture") {
-      UserServices.getUser(userID).then((Response) => {
+      let cc = {headers: { Authorization: "Bearer " + token }};
+      UserServices.getUser(userID, cc).then((Response) => {
         setUserName(Response.data.lastName);
         // console.log(Response.data.lastName);
       });
@@ -90,6 +94,7 @@ const LoginForm = (params) => {
       nav("/Lecture");
     }
   }, []);
+
   const getUserDataFromCookie = () => {
     const cookies = document.cookie.split("; ");
     console.log("cookies", cookies);
@@ -201,12 +206,12 @@ const LoginForm = (params) => {
     console.log(loginTemplate);
   };
 
+  
   const usernamesetter = (e) => {
-    console.log(e.userID);
-    console.log(config);
-    console.log(token);
-    UserServices.getUser(e.userID, config).then((Response) => {
-      console.log("MMM");
+    let cc = {headers: { Authorization: "Bearer " + e.token }};
+    console.log("headers", cc);
+  
+    UserServices.getUser(e.userID, cc).then((Response) => {
       setUserName(Response.data.lastName);
       console.log(Response.data.lastName);
     });

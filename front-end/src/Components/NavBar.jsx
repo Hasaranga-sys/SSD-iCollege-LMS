@@ -83,6 +83,8 @@ const NavBar = ({ user }) => {
         } else if (name === "userID") {
           userData.userID = value;
           setUserID(value);
+        } else if (name === "token") {
+          setToken(value);
         }
       }
 

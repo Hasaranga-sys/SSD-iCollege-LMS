@@ -8,13 +8,6 @@ export default({children})=>{
     const [userName, setUserName] = useState("");
     const [token, setToken] = useState("");
 
-    //get details from cookie
-    // useEffect(()=>{
-        
-    //     setUserDetails("user");
-    //     setIsAuthenticated("hi");
-        
-    // },[]);
     
     return(
         <div>
