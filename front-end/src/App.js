@@ -29,6 +29,7 @@ import StudentLectuersView from "./Components/Student/StudentLectuersView";
 import { useContext } from "react";
 import { AuthContext } from "./Components/UserManagement/AuthContext";
 import { useEffect, useState } from "react";
+import jwt_decode from "jwt-decode";
 
 function App() {
   const {
@@ -36,6 +37,8 @@ function App() {
     setUserDetails,
     isAuthenticated,
     setIsAuthenticated,
+    user,
+    setUser,
     token,
     setToken,
   } = useContext(AuthContext);
@@ -44,44 +47,27 @@ function App() {
     headers: { Authorization: "Bearer " + token },
   };
 
-  const [user, setUser] = useState(null);
-
   useEffect(() => {
-    const getUser = () => {
-      fetch("https://localhost:443/auth/login/success", {
-        method: "GET",
-        credentials: "include",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-          "Access-Control-Allow-Credentials": true,
-        },
-      })
-        .then((response) => {
-          if (response.status === 200) return response.json();
-          throw new Error("Authentication has failed!");
-        })
-        .then((resObject) => {
-          setUser(resObject.user);
-        })
-        .catch((err) => {
-          console.error("Fetch Error:", err);
-        });
-    };
-    getUser();
+    const storedUserToken = localStorage.getItem("userToken");
+    if (storedUserToken) {
+      const userObject = jwt_decode(storedUserToken);
+      setUser(userObject);
+    }
   }, []);
-
-  console.log(user);
 
   return (
     <div className="App">
       <React.Fragment>
         <header>
-          <NavBar user={user} />
+          <NavBar />
         </header>
         <main>
           <Routes>
-            <Route path="/" element={<LoginForm />} exact />
+            <Route
+              path="/"
+              element={user ? <Navigate to="/StudentHome" /> : <LoginForm />}
+              exact
+            />
 
             {/* admin */}
             <Route

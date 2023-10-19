@@ -9,7 +9,7 @@ import { useState } from "react";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
-const NavBar = ({ user }) => {
+const NavBar = () => {
   const {
     userDetails,
     setUserDetails,
@@ -19,6 +19,8 @@ const NavBar = ({ user }) => {
     setUserName,
     token,
     setToken,
+    setUser,
+    user,
   } = useContext(AuthContext);
   const [navbar, setNavbar] = useState();
   const navigate = useNavigate();
@@ -32,7 +34,8 @@ const NavBar = ({ user }) => {
   console.log("token", token);
 
   const logout = () => {
-    window.open("https://localhost:443/auth/logout", "_self");
+    localStorage.removeItem("userToken");
+    setUser(null);
   };
   // const { role, userID } = getUserDataFromCookie();
 
@@ -229,9 +232,9 @@ const NavBar = ({ user }) => {
           {user ? (
             <ul className="list">
               <li className="listItem">
-                <img src={user.photos[0].value} alt="" className="avatar" />
+                <img src={user.picture} alt="" className="avatar" />
               </li>
-              <li className="listItem">{user.displayName}</li>
+              <li className="listItem">{user.name}</li>
               <li>
                 <a
                   href="/"

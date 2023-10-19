@@ -6,9 +6,18 @@ import Swal from "sweetalert2";
 import "../UserManagement/Login.css";
 import NavBar from "../NavBar";
 import GoogleButton from "react-google-button";
+import {
+  GoogleLogin,
+  GoogleLogout,
+  GoogleOAuthProvider,
+} from "@react-oauth/google";
+import jwt_decode from "jwt-decode";
 
 import { useContext } from "react";
 import { AuthContext } from "./AuthContext";
+
+const clientId =
+  "228047157354-nv5drkfp0b5f2r9oiiqa4h59gt4ker4b.apps.googleusercontent.com";
 
 const LoginForm = (params) => {
   const [regNumber, setregNumber] = useState("");
@@ -23,6 +32,8 @@ const LoginForm = (params) => {
     setUserName,
     token,
     setToken,
+    user,
+    setUser,
   } = useContext(AuthContext);
 
   const [Ntoken, setNtoken] = useState("");
@@ -217,6 +228,19 @@ const LoginForm = (params) => {
     });
   };
 
+  const responseGoogle = (response) => {
+    if (response) {
+      const userToken = response.credential;
+      // Store the user token in local storage
+      localStorage.setItem("userToken", userToken);
+      const userObject = jwt_decode(userToken);
+      console.log("Current user ID token:", response.credential);
+      console.log(userObject);
+
+      setUser(userObject);
+    }
+  };
+
   const google = () => {
     window.open("https://localhost:443/auth/google", "_self");
   };
@@ -253,7 +277,23 @@ const LoginForm = (params) => {
         </form>
         <div class="my-3 row d-flex justify-content-center">
           <div class="col-5">
-            <GoogleButton onClick={google} />
+            {/* <GoogleButton onClick={google} /> */}
+            <GoogleOAuthProvider clientId={clientId}>
+              <GoogleLogin
+                render={(renderProps) => (
+                  <button
+                    type="button"
+                    onClick={renderProps.onClick}
+                    disabled={renderProps.disabled}
+                  >
+                    Sign in with Google
+                  </button>
+                )}
+                onSuccess={responseGoogle}
+                onFailure={responseGoogle}
+                cookiePolicy="single_host_origin"
+              />
+            </GoogleOAuthProvider>
           </div>
         </div>
 

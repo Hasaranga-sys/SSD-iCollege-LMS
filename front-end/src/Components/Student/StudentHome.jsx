@@ -59,7 +59,7 @@ const StudentHome = () => {
       </div>
 
       <div className="row">
-        <ViewNotice />
+        {/* <ViewNotice /> */}
         {/* 
         <div class="card  text-bg-white shadow-lg mb-3 mt-5 text-center p-4" style={{maxWidth:350, marginLeft:50}}>
                 </div>  */}
