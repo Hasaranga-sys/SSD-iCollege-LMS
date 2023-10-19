@@ -1,6 +1,8 @@
 import axios from 'axios'
+import { BASE_URL } from "../../config.js"
 
-const URL = "http://localhost:5000/notice";
+const URL = `${BASE_URL}/notice`;
+
 
 class NoticeService{
     createNotice(notice){

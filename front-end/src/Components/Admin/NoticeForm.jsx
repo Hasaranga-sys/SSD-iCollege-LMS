@@ -5,7 +5,8 @@ import NoticeService from "../Service/NoticeService";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 import Swal from "sweetalert2";
-import '../Admin/Admin.css'
+import "../Admin/Admin.css";
+import DOMPurify from "dompurify";
 const NoticeForm = () => {
   const [faculty, setFaculty] = useState([]);
   const [date, setDate] = useState("");
@@ -26,7 +27,7 @@ const NoticeForm = () => {
         console.log(response.notices.notice);
       });
     }
-  }, []);
+  }, [_id]);
 
   const submitNotice = (e) => {
     e.preventDefault();
@@ -104,18 +105,6 @@ const NoticeForm = () => {
                     style={{ marginLeft: 9 }}
                     required
                   />
-
-                  {/* <select class="form-select w-75" 
-                                    aria-label="Default select example"
-                                    value={module.value}
-                                    required
-                                    placeholder='SelectModule..'
-                                    onChange={(e) => {setModule(e.target.value);}}>
-                                    <option value="">select Module</option>
-                                    <option value="SE3050-User Experiance Engineering">SE3050-User Experiance Engineering</option>
-                                    <option value="SE3060-Application Framework">SE3060-Application Framework</option>
-                                    <option value="SE3090-Softwre Architecture">SE3090-Softwre Architecture</option>
-                            </select> */}
                 </div>
                 <div className="row w-50  mx-auto mt-3">
                   <strong
@@ -130,7 +119,7 @@ const NoticeForm = () => {
                     className="form-control w-75"
                     placeholder="Add Topic..."
                     type="text"
-                    value={topic}
+                    value={DOMPurify.sanitize(topic)}
                     minLength="5"
                     onChange={(e) => {
                       setTopic(e.target.value);
@@ -153,7 +142,7 @@ const NoticeForm = () => {
                     className="form-control w-75"
                     placeholder="Add notice...."
                     type="text"
-                    value={notice}
+                    value={DOMPurify.sanitize(notice)}
                     minLength="5"
                     onChange={(e) => {
                       setNotice(e.target.value);

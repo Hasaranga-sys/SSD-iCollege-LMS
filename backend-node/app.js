@@ -9,6 +9,18 @@ const libraryItemRouter = require("./Router/LibraryItemRouter");
 const LectureRouter = require("./Router/LectureRouter");
 const https = require("https");
 const fs = require("fs");
+
+//added hasa
+const csrf = require('csurf');
+const cookieParser = require("cookie-parser"); // Add cookie-parser middleware
+
+const {
+  CustomValidationError,
+  CustomNotFoundError,
+  CustomServerError,
+} = require("./Error/Error");
+
+
 const passport = require("passport");
 const cookieSession = require("cookie-session");
 const authRoute = require("./Router/auth");
@@ -50,7 +62,49 @@ app.use("/auth", authRoute);
 app.use("/notice", router);
 app.use("/user", userRouter);
 app.use("/Lecture", LectureRouter);
+app.use(cookieParser());
 app.use("/pdf", require("./Router/LibraryItemRouter"));
+
+//hasa added
+//Initialize the csurf middleware
+const csrfProtection = csrf({
+  cookie: true, 
+});
+
+//csurfProtection middleware
+app.use(csrfProtection);
+
+// custom error handler middleware
+app.use((err, req, res, next) => {
+  // Log the error (without sensitive data)
+  console.error(err.message);
+
+  //  error response object with a default message
+  let errorResponse = {
+    message: "An error occurred while processing your request.",
+  };
+
+
+  let statusCode = 500;
+
+  // Handle known custom error types
+  if (err instanceof CustomValidationError) {
+    errorResponse.message = "Validation failed. Please check your input.";
+    errorResponse.errors = err.errors; // Include specific validation errors
+    statusCode = 400; 
+  } else if (err instanceof CustomNotFoundError) {
+    errorResponse.message = "Resource not found.";
+    statusCode = 404; 
+  } else if (err instanceof CustomServerError) {
+    errorResponse.message = "Internal server error.";
+    statusCode = 500; 
+  }
+
+  // Send the error response with the appropriate status code
+  res.status(statusCode).json(errorResponse);
+});
+
+
 
 // mongoose
 //   .connect(
