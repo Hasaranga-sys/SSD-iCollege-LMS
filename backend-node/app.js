@@ -54,22 +54,20 @@ app.use(
   })
 );
 
-// app.use("/libarary", libraryItemRouter);
-//app.use("/resource",resour )
-// app.use("/lecture", require("./Router/LectureRouter"));
-
-app.use("/auth", authRoute);
-app.use("/notice", router);
-app.use("/user", userRouter);
-app.use("/Lecture", LectureRouter);
-app.use(cookieParser());
-app.use("/pdf", require("./Router/LibraryItemRouter"));
-
 //hasa added
 //Initialize the csurf middleware
 const csrfProtection = csrf({
   cookie: true, 
 });
+
+//csurfProtection middleware
+// app.use(csrfProtection);
+
+app.use("/auth", authRoute);
+app.use("/notice", router);
+app.use("/user", userRouter);
+app.use("/Lecture", LectureRouter);
+app.use("/pdf", require("./Router/LibraryItemRouter"));
 
 //csurfProtection middleware
 app.use(csrfProtection);

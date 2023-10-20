@@ -6,6 +6,7 @@ import Swal from "sweetalert2";
 import "../UserManagement/Register.css";
 import { useContext } from "react";
 import { AuthContext } from "./AuthContext.js";
+import DOMPurify from "dompurify";
 const UserForm = (params) => {
   const [status, setstatus] = useState("");
   const { id } = useParams();
@@ -130,16 +131,17 @@ const UserForm = (params) => {
       <br />
       <br />
       <br />
-      <br /><br />
-      <br />
-      <br />
-      <br /><br />
       <br />
       <br />
       <br />
       <br />
-      
-      
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+
       <div className=" boxmr shadow card col-md-8 offset-md-2 offset-md-2">
         <div className="card-body">
           <div>
@@ -156,7 +158,7 @@ const UserForm = (params) => {
                   type="text"
                   className="form-control"
                   minlength="5"
-                  value={lastName}
+                  value={DOMPurify.sanitize(lastName)}
                   onChange={(e) => {
                     setlastName(e.target.value);
                   }}
@@ -171,7 +173,7 @@ const UserForm = (params) => {
                 <input
                   type="text"
                   className="form-control"
-                  value={initials}
+                  value={DOMPurify.sanitize(initials)}
                   onChange={(e) => {
                     setinitials(e.target.value);
                   }}
@@ -191,7 +193,7 @@ const UserForm = (params) => {
                   minlength="10"
                   maxlength="10"
                   pattern="[0-9]*"
-                  value={mobileNumber}
+                  value={DOMPurify.sanitize(mobileNumber)}
                   onChange={(e) => {
                     setmobileNumber(e.target.value);
                   }}
@@ -206,7 +208,7 @@ const UserForm = (params) => {
                 <input
                   type="email"
                   className="form-control"
-                  value={email}
+                  value={DOMPurify.sanitize(email)}
                   onChange={(e) => {
                     setemail(e.target.value);
                   }}
@@ -221,7 +223,7 @@ const UserForm = (params) => {
                 <input
                   type="text"
                   className="form-control"
-                  value={faculty}
+                  value={DOMPurify.sanitize(faculty)}
                   onChange={(e) => {
                     setfaculty(e.target.value);
                   }}
@@ -241,7 +243,7 @@ const UserForm = (params) => {
                     maxlength="7"
                     type="text"
                     className="form-control"
-                    value={regNumber}
+                    value={DOMPurify.sanitize(regNumber)}
                     onChange={(e) => {
                       setregNumber(e.target.value);
                     }}
@@ -257,7 +259,7 @@ const UserForm = (params) => {
                 <input
                   type="password"
                   className="form-control"
-                  value={password}
+                  value={DOMPurify.sanitize(password)}
                   onChange={(e) => {
                     setpassword(e.target.value);
                   }}

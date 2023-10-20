@@ -7,12 +7,13 @@ import "react-calendar/dist/Calendar.css";
 import Swal from "sweetalert2";
 import "../Admin/Admin.css";
 import DOMPurify from "dompurify";
-const NoticeForm = () => {
+const NoticeForm = ({ csrfToken }) => {
   const [faculty, setFaculty] = useState([]);
   const [date, setDate] = useState("");
   const [topic, setTopic] = useState("");
   const [notice, setNotice] = useState("");
   const [calander, setCalander] = useState(new Date());
+  const [errors, setErrors] = useState({});
 
   const { _id } = useParams();
   const navigate = useNavigate();
@@ -29,8 +30,46 @@ const NoticeForm = () => {
     }
   }, [_id]);
 
-  const submitNotice = (e) => {
+
+
+  // Function to validate the form
+  const validateForm = () => {
+    const validationErrors = {};
+
+    if (!faculty) {
+      validationErrors.faculty = "Faculty is required";
+    }
+
+    if (!date) {
+      validationErrors.date = "Date is required";
+    }
+
+    if (topic.length < 5) {
+      validationErrors.topic = "Topic must be at least 5 characters long";
+    }
+
+    if (notice.length < 5) {
+      validationErrors.notice = "Notice must be at least 5 characters long";
+    }
+
+    setErrors(validationErrors);
+
+    return Object.keys(validationErrors).length === 0;
+  };
+
+  const submitNotice = async (e) => {
     e.preventDefault();
+
+    try {
+      const formData = {
+        faculty,
+        date,
+        topic,
+        notice,
+      };
+    } catch (error) {
+      console.error("Error submitting notice:", error);
+    }
     const notices = { faculty, date, topic, notice };
 
     if (_id) {
@@ -72,6 +111,7 @@ const NoticeForm = () => {
                     placeholder="SelectFaculty.."
                     onChange={(e) => {
                       setFaculty(e.target.value);
+                      setErrors({ ...errors, faculty: "" });
                     }}
                   >
                     <option value="">Select faculty </option>
@@ -84,6 +124,9 @@ const NoticeForm = () => {
                     <option value="Faculty of Engineering">
                       Faculty of Engineering
                     </option>
+                    {errors.faculty && (
+                      <div className="text-danger">{errors.faculty}</div>
+                    )}
                   </select>
                 </div>
                 <div className="row w-50  mx-auto mt-3">
@@ -101,10 +144,14 @@ const NoticeForm = () => {
                     value={date}
                     onChange={(e) => {
                       setDate(e.target.value);
+                      setErrors({ ...errors, date: "" });
                     }}
                     style={{ marginLeft: 9 }}
                     required
                   />
+                  {errors.date && (
+                    <div className="text-danger">{errors.date}</div>
+                  )}
                 </div>
                 <div className="row w-50  mx-auto mt-3">
                   <strong
@@ -123,9 +170,13 @@ const NoticeForm = () => {
                     minLength="5"
                     onChange={(e) => {
                       setTopic(e.target.value);
+                      setErrors({ ...errors, topic: "" });
                     }}
                     required
                   />
+                  {errors.topic && (
+                    <div className="text-danger">{errors.topic}</div>
+                  )}
                 </div>
 
                 <div className="row w-50  mx-auto mt-3">
@@ -146,9 +197,13 @@ const NoticeForm = () => {
                     minLength="5"
                     onChange={(e) => {
                       setNotice(e.target.value);
+                      setErrors({ ...errors, notice: "" });
                     }}
                     required
                   />
+                  {errors.notice && (
+                    <div className="text-danger">{errors.notice}</div>
+                  )}
                 </div>
 
                 <div

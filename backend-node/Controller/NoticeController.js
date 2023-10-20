@@ -1,4 +1,20 @@
 const NoticeModel = require("../Model/NoticeModel");
+const { body, validationResult } = require('express-validator');
+
+// Create a validation middleware function for adding and updating notices
+const validateNotice = [
+  body('faculty').notEmpty().withMessage('Faculty is required'),
+  body('date').isDate().withMessage('Invalid date format'),
+  body('topic').isLength({ min: 5 }).withMessage('Topic must be at least 5 characters long'),
+  body('notice').isLength({ min: 5 }).withMessage('Notice must be at least 5 characters long'),
+  (req, res, next) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+    next();
+  },
+];
 //getAll
 const getAllNotices = async (req, res, next) => {
   let notices;
@@ -82,8 +98,8 @@ const updateNotice = async (req, res, next) => {
   return res.status(200).json({ notices });
 };
 
-exports.addNotice = addNotice;
-exports.updateNotice = updateNotice;
+exports.addNotice = [validateNotice, addNotice]; // Use an array to apply validation middleware
+exports.updateNotice = [validateNotice, updateNotice];
 exports.DeleteNotice = DeleteNotice;
 exports.getNoticeById = getNoticeById;
 exports.getAllNotices = getAllNotices;
