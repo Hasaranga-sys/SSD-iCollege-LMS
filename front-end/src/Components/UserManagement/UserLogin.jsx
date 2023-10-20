@@ -70,7 +70,7 @@ const LoginForm = (params) => {
     const { role, userID, token } = getUserDataFromCookie();
 
     if (role === "student") {
-      let cc = {headers: { Authorization: "Bearer " + token }};
+      let cc = { headers: { Authorization: "Bearer " + token } };
       UserServices.getUser(userID, cc).then((Response) => {
         setUserName(Response.data.lastName);
         // console.log(Response.data.lastName);
@@ -82,19 +82,19 @@ const LoginForm = (params) => {
     } else if (role === "admin") {
       console.log("userID", userID);
       console.log("token111", token);
-      let cc = {headers: { Authorization: "Bearer " + token }};
+      let cc = { headers: { Authorization: "Bearer " + token } };
       UserServices.getUser(userID, cc).then((Response) => {
         console.log("userID", userID);
         console.log("token", token);
         setUserName(Response.data.lastName);
-         //console.log(Response.data.lastName);
+        //console.log(Response.data.lastName);
       });
       console.log(`User is an admin with ID ${userID}`);
       setUserDetails({ role, userID });
       setIsAuthenticated(true);
       nav("/AdminHome");
     } else if (role === "lecture") {
-      let cc = {headers: { Authorization: "Bearer " + token }};
+      let cc = { headers: { Authorization: "Bearer " + token } };
       UserServices.getUser(userID, cc).then((Response) => {
         setUserName(Response.data.lastName);
         // console.log(Response.data.lastName);
@@ -217,11 +217,10 @@ const LoginForm = (params) => {
     console.log(loginTemplate);
   };
 
-  
   const usernamesetter = (e) => {
-    let cc = {headers: { Authorization: "Bearer " + e.token }};
+    let cc = { headers: { Authorization: "Bearer " + e.token } };
     console.log("headers", cc);
-  
+
     UserServices.getUser(e.userID, cc).then((Response) => {
       setUserName(Response.data.lastName);
       console.log(Response.data.lastName);
@@ -232,12 +231,17 @@ const LoginForm = (params) => {
     if (response) {
       const userToken = response.credential;
       // Store the user token in local storage
-      localStorage.setItem("userToken", userToken);
-      const userObject = jwt_decode(userToken);
-      console.log("Current user ID token:", response.credential);
-      console.log(userObject);
-
-      setUser(userObject);
+      try {
+        localStorage.setItem("userToken", userToken);
+        const userObject = jwt_decode(userToken);
+        console.log("Current user ID token:", response.credential);
+        console.log(userObject);
+        setUser(userObject);
+      } catch (error) {
+        console.error("Error decoding user token:", error);
+      }
+    } else {
+      console.error("No response received from Google Sign-In");
     }
   };
 
@@ -292,6 +296,7 @@ const LoginForm = (params) => {
                 onSuccess={responseGoogle}
                 onFailure={responseGoogle}
                 cookiePolicy="single_host_origin"
+                useOneTap
               />
             </GoogleOAuthProvider>
           </div>

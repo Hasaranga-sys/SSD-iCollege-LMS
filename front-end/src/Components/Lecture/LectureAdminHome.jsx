@@ -3,17 +3,34 @@ import LectureService from "../Service/LectureService";
 
 export default function LectureAdminHome() {
   const [lectureList, setLectureList] = useState([]);
+
   //   const navigate = useNavigate();
   useEffect(() => {
-    const getLectures = () => {
-      LectureService.getAllLecturers().then((res) => {
-        setLectureList(res.data);
-        console.log(res.data);
-      });
+    const fetchLectures = async () => {
+      try {
+        const response = await LectureService.getAllLecturers();
+        if (response.status === 200) {
+          setLectureList(response.data);
+          console.log(response.data);
+        } else {
+          alert("Failed to fetch data");
+        }
+      } catch (error) {
+        alert("An error occurred while fetching data");
+      }
     };
 
-    getLectures();
+    fetchLectures();
   }, []);
+
+  function validateURL(url) {
+    try {
+      const parsed = new URL(url);
+      return ["https:", "http:"].includes(parsed.protocol);
+    } catch (error) {
+      return false;
+    }
+  }
 
   return (
     <div>
@@ -61,12 +78,22 @@ export default function LectureAdminHome() {
                     <br></br> {lecture.semester}
                   </td>
                   <td style={{ width: "15%" }}>
-                    <a href={lecture.pdf} download>
+                    <a
+                      href={validateURL(lecture.pdf) ? lecture.pdf : ""}
+                      download
+                    >
                       {lecture.subject}_{lecture.topic}
                     </a>
                   </td>
                   <td style={{ width: "15%" }}>
-                    <a href={lecture.meeting_link}>
+                    <a
+                      href={
+                        validateURL(lecture.meeting_link)
+                          ? lecture.meeting_link
+                          : ""
+                      }
+                      download
+                    >
                       {lecture.topic}_{lecture.date}_{lecture.time}
                     </a>
                   </td>

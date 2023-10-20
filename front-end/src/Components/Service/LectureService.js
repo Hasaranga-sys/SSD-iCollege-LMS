@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const URL = "http://localhost:5000/Lecture";
+const URL = "https://localhost:443/Lecture";
 
 class LectureService {
   createLecture(lecture) {
@@ -10,13 +10,13 @@ class LectureService {
     return axios.get(URL);
   }
   deleteLecture(Id) {
-    return axios.delete(`http://localhost:5000/Lecture/${Id}`);
+    return axios.delete(`https://localhost:443/Lecture/${Id}`);
   }
   updateNotice(noticeId, notice) {
     return axios.put(URL + "/" + noticeId);
   }
   getLectureById(id) {
-    return axios.get(`http://localhost:5000/Lecture/${id}`);
+    return axios.get(`https://localhost:443/Lecture/${id}`);
   }
 }
 export default new LectureService();

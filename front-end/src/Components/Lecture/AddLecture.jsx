@@ -23,9 +23,31 @@ export default function AddLecture() {
     navigate("/Lecture");
   };
 
+  const showError = (errorMessage) => {
+    Swal.fire({
+      icon: "error",
+      title: "Validation Error",
+      text: errorMessage,
+    });
+  };
+
   const clickSubmit = async (e) => {
     try {
       e.preventDefault();
+      if (
+        !year ||
+        !subject ||
+        !semester ||
+        !topic ||
+        !date ||
+        !time ||
+        !meeting_link ||
+        !discription ||
+        !pdf
+      ) {
+        showError("All fields are required");
+        return;
+      }
       const data = new FormData();
       data.append("year", year);
       data.append("subject", subject);
@@ -36,14 +58,26 @@ export default function AddLecture() {
       data.append("meeting_link", meeting_link);
       data.append("discription", discription);
       // data.append("lecture",lecture);
-
       for (var x = 0; x < pdf.length; x++) {
-        data.append("uploaded_Image", pdf[x]);
+        const file = pdf[x];
+        if (file.type === "application/pdf" && file.size <= 5242880 /* 5MB */) {
+          data.append("uploaded_Image", file);
+        } else {
+          // showError(
+          //   "Invalid file type or size. Please upload a PDF file under 5MB."
+          // );
+          alert(
+            "Invalid file type or size. Please upload a PDF file under 5MB."
+          );
+          return;
+        }
       }
-
-      const res = await fetch(`http://localhost:5000/Lecture`, {
+      const res = await fetch(`https://localhost:443/Lecture`, {
         method: "POST",
         body: data,
+        // headers: {
+        //   'Authorization': `Bearer ${token}`,
+        // },
       });
       if (res.ok) {
         setYear("");
@@ -64,11 +98,23 @@ export default function AddLecture() {
           showConfirmButton: false,
           timer: 1500,
         });
+      } else {
+        // Handle server response error, e.g., display an error message to the user.
+        console.error("Server error:", res.status, res.statusText);
+        showError(
+          "An error occurred while scheduling the lecture. Please try again later."
+        );
       }
     } catch (error) {
-      console.log(error);
+      console.error("An error occurred:", error);
     }
   };
+
+  function isValidURL(url) {
+    // Regular expression to validate URLs
+    var urlPattern = /^(https?|ftp):\/\/[^\s/$.?#].[^\s]*$/;
+    return urlPattern.test(url);
+  }
 
   return (
     <div>
@@ -234,7 +280,14 @@ export default function AddLecture() {
                       required
                       title="You must have to enter meeting link"
                       value={meeting_link}
-                      onChange={(e) => setMeeting_link(e.target.value)}
+                      onChange={(e) => {
+                        const inputValue = e.target.value;
+                        if (isValidURL(inputValue)) {
+                          setMeeting_link(inputValue);
+                        } else {
+                          alert("Please enter a valid HTTPS link");
+                        }
+                      }}
                     />
                   </div>
                 </div>
